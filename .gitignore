@@ -1,0 +1,20 @@
+# Virtual Environments
+kdd_env/
+env/
+venv/
+.env
+
+# Python compilation files
+__pycache__/
+*.pyc
+
+# IDEs
+.vscode/
+.idea/
+
+# Flask session/temp
+instance/
+.webassets-cache
+
+# Optional: Models (if you want to omit them from source control later)
+# models/*.pkl
