@@ -3,6 +3,8 @@ kdd_env/
 env/
 venv/
 .env
+new_/
+chat/.env
 
 # Python compilation files
 __pycache__/

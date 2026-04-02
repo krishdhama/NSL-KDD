@@ -125,6 +125,7 @@
             font-weight: 800;
             line-height: 1.1;
             background: linear-gradient(to right, #fff, var(--text-secondary));
+            background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 1rem;
@@ -165,6 +166,18 @@
             color: #fff;
             margin: 0;
             letter-spacing: 1px;
+        }
+
+        .result-banner.info {
+            background: rgba(14, 165, 233, 0.07);
+            border-color: rgba(14, 165, 233, 0.35);
+            box-shadow: 0 0 30px rgba(14, 165, 233, 0.12);
+        }
+
+        .result-meta {
+            margin-top: 0.85rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
         }
 
         @keyframes dropIn {
@@ -369,10 +382,154 @@
             transform: translateY(0) scale(0.98);
         }
 
+        .chat-card {
+            margin-top: 2.5rem;
+        }
+
+        .chat-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .chat-window {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 420px;
+            overflow-y: auto;
+            padding-right: 0.4rem;
+        }
+
+        .chat-empty {
+            border: 1px dashed rgba(148, 163, 184, 0.22);
+            border-radius: 16px;
+            padding: 1.25rem;
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .chat-message {
+            padding: 1rem 1.1rem;
+            border-radius: 16px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            border: 1px solid transparent;
+        }
+
+        .chat-message.user {
+            background: rgba(139, 92, 246, 0.12);
+            border-color: rgba(139, 92, 246, 0.28);
+            align-self: flex-end;
+        }
+
+        .chat-message.assistant {
+            background: rgba(14, 165, 233, 0.1);
+            border-color: rgba(14, 165, 233, 0.22);
+            align-self: flex-start;
+        }
+
+        .chat-role {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 0.45rem;
+            font-weight: 700;
+        }
+
+        .chat-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-form textarea {
+            width: 100%;
+            min-height: 110px;
+            resize: vertical;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .chat-form textarea:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.2), inset 0 2px 4px rgba(0,0,0,0.2);
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .chat-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .chat-hint {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .chat-button {
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.35), inset 0 2px 0 rgba(255,255,255,0.15);
+        }
+
+        .chat-button:hover {
+            box-shadow: 0 20px 40px rgba(14, 165, 233, 0.45), inset 0 2px 0 rgba(255,255,255,0.25);
+        }
+
+        .explain-card {
+            margin-bottom: 2rem;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .feature-pill {
+            padding: 0.8rem 1rem;
+            border-radius: 14px;
+            border: 1px solid rgba(16, 185, 129, 0.25);
+            background: rgba(16, 185, 129, 0.07);
+            min-width: 180px;
+        }
+
+        .feature-pill strong {
+            display: block;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .feature-pill span {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.88rem;
+        }
+
+        .explain-copy {
+            color: var(--text-primary);
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
             .dashboard-grid { grid-template-columns: 1fr; }
             .inputs-wrapper { grid-template-columns: 1fr; }
+            .chat-actions { align-items: stretch; }
+            .chat-button { width: 100%; }
         }
     </style>
 </head>
@@ -391,12 +548,47 @@
         </header>
 
         {% if result %}
-        <!-- Detect if result contains siren completely dynamically via CSS class -->
-        <div class="result-banner {% if '🚨' in result %}danger{% endif %}">
+        <div class="result-banner {% if 'NORMAL' not in result|upper %}danger{% endif %}">
             <h2>{{ result }}</h2>
+            {% if prediction_confidence is not none %}
+            <div class="result-meta">Model confidence: {{ '%.2f'|format(prediction_confidence * 100) }}%</div>
+            {% endif %}
         </div>
         {% endif %}
 
+        {% if chat_error %}
+        <div class="result-banner info">
+            <h2>{{ chat_error }}</h2>
+        </div>
+        {% endif %}
+
+        {% if prediction_explanation or responsible_features %}
+        <section class="card explain-card">
+            <div class="card-header">
+                <div class="card-icon">07</div>
+                <div>
+                    <h3>Why This Prediction Happened</h3>
+                    <p class="chat-subtitle">This explanation uses the model output, your submitted columns, and the strongest active features in the classifier.</p>
+                </div>
+            </div>
+
+            {% if prediction_explanation %}
+            <div class="explain-copy">{{ prediction_explanation }}</div>
+            {% endif %}
+
+            {% if responsible_features %}
+            <div class="feature-list">
+                {% for item in responsible_features %}
+                <div class="feature-pill">
+                    <strong>{{ item.name }}</strong>
+                    <span>Value: {{ item.value }}</span>
+                    <span>Importance: {{ '%.4f'|format(item.importance) }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
         <form action="/predict" method="POST" id="kdd-form">
             <div class="dashboard-grid">
 
@@ -534,6 +726,39 @@
                 <button type="submit" id="initBtn">Init Deep Scan Sequence</button>
             </div>
         </form>
+
+        <section class="card chat-card">
+            <div class="card-header">
+                <div class="card-icon">AI</div>
+                <div>
+                    <h3>NSL-KDD Knowledge Chat</h3>
+                    <p class="chat-subtitle">Ask the assistant about the NSL-KDD dataset, attack types, features, or the content in your paper.</p>
+                </div>
+            </div>
+
+            <div class="chat-window">
+                {% if chat_history %}
+                    {% for item in chat_history %}
+                    <div class="chat-message {{ item.role }}">
+                        <span class="chat-role">{{ item.role }}</span>
+                        {{ item.message }}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                <div class="chat-empty">
+                    Start with questions like "What is NSL-KDD?", "Which attack classes exist?", or "Explain the important traffic features."
+                </div>
+                {% endif %}
+            </div>
+
+            <form action="/chat" method="POST" class="chat-form" id="chat-form">
+                <textarea name="question" placeholder="Ask about NSL-KDD..." required>{{ chat_question }}</textarea>
+                <div class="chat-actions">
+                    <div class="chat-hint">This assistant answers from the PDF-backed knowledge base inside your `chat` module.</div>
+                    <button type="submit" class="chat-button" id="chatBtn">Ask AI Analyst</button>
+                </div>
+            </form>
+        </section>
     </div>
 
     <!-- Mouse glowing effect on cards -->
@@ -541,6 +766,13 @@
         document.getElementById('kdd-form').addEventListener('submit', function() {
             const btn = document.getElementById('initBtn');
             btn.innerHTML = 'Scanning Neural Network...';
+            btn.style.opacity = '0.8';
+            btn.style.pointerEvents = 'none';
+        });
+
+        document.getElementById('chat-form').addEventListener('submit', function() {
+            const btn = document.getElementById('chatBtn');
+            btn.innerHTML = 'Thinking Through NSL-KDD...';
             btn.style.opacity = '0.8';
             btn.style.pointerEvents = 'none';
         });
@@ -558,3 +790,4 @@
     </script>
 </body>
 </html>
+
