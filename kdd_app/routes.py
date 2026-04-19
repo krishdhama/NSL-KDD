@@ -1,7 +1,5 @@
 from flask import Blueprint, render_template, request, session
 
-from chat.genai import ask_pdf
-
 from .services.ml_service import get_top_services, run_prediction
 
 
@@ -54,6 +52,8 @@ def chat():
     history = get_chat_history()
 
     try:
+        from chat.genai import ask_pdf
+
         answer = ask_pdf(question)
     except Exception as exc:
         return render_home(

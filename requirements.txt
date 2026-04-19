@@ -1,0 +1,14 @@
+scikit-learn==1.6.1
+numpy==2.0.2
+pandas==2.2.2
+joblib==1.5.3
+flask
+python-dotenv
+langchain
+langchain-community
+langchain-openai
+langchain-google-genai
+langchain-huggingface
+langchain-text-splitters
+faiss-cpu
+pypdf

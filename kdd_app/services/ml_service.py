@@ -4,8 +4,6 @@ import os
 import joblib
 import pandas as pd
 
-from chat.genai import explain_prediction
-
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 MODELS_DIR = os.path.join(BASE_DIR, "models")
@@ -97,6 +95,8 @@ def run_prediction(form_data):
     explanation = None
     if confidence is not None:
         try:
+            from chat.genai import explain_prediction
+
             explanation = explain_prediction(
                 prediction=pred_str,
                 confidence=confidence,
