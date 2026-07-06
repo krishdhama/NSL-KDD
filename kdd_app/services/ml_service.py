@@ -5,8 +5,8 @@ import joblib
 import pandas as pd
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-MODELS_DIR = os.path.join(BASE_DIR, "models")
+APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MODELS_DIR = os.path.join(APP_DIR, "data", "models")
 
 model = joblib.load(os.path.join(MODELS_DIR, "model.pkl"))
 model.n_jobs = 1
@@ -95,7 +95,7 @@ def run_prediction(form_data):
     explanation = None
     if confidence is not None:
         try:
-            from chat.genai import explain_prediction
+            from .rag_service import explain_prediction
 
             explanation = explain_prediction(
                 prediction=pred_str,

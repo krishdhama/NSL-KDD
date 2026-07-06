@@ -52,7 +52,7 @@ def chat():
     history = get_chat_history()
 
     try:
-        from chat.genai import ask_pdf
+        from .services.rag_service import ask_pdf
 
         answer = ask_pdf(question)
     except Exception as exc:

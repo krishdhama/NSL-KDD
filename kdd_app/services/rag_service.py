@@ -10,13 +10,15 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-PDF_PATH = os.path.join(BASE_DIR, "paper.pdf")
-VECTOR_DB_PATH = os.path.join(BASE_DIR, "vector_store_db")
+APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.dirname(APP_DIR)
+RAG_DATA_DIR = os.path.join(APP_DIR, "data", "rag")
+PDF_PATH = os.path.join(RAG_DATA_DIR, "paper.pdf")
+VECTOR_DB_PATH = os.path.join(RAG_DATA_DIR, "vector_store_db")
 EMBEDDING_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
-ENV_PATH = os.path.join(BASE_DIR, ".env")
 
-load_dotenv(ENV_PATH)
+load_dotenv(os.path.join(PROJECT_DIR, ".env"))
+load_dotenv(os.path.join(PROJECT_DIR, "chat", ".env"))
 
 PROMPT_TEMPLATE = ChatPromptTemplate.from_template(
     """You are a strict assistant.
